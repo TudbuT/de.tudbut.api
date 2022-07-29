@@ -213,6 +213,10 @@ public class TudbuTAPIClient {
         return user.getSub("services").getSub(service).getArray("messages").size() != 0;
     }
 
+    public boolean hasNewDataMessages() {
+        return user.getSub("services").getSub(service).getArray("dataMessages").size() != 0;
+    }
+
     public long userOnlineTime() {
         return user.getLong("onlineTime");
     }
