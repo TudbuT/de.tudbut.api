@@ -1,0 +1,8 @@
+"builder.isbpl" include
+
+"de.tudbut.api" =name
+"de.tudbut.api.Main" =mainClass
+
+func dependencies {
+    "../tuddylib/TuddyLIB.jar" file
+}

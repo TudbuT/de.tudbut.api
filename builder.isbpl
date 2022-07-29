@@ -1,0 +1,280 @@
+"#stream.isbpl" include
+"#time.isbpl" include
+
+def ProcessBuilder "java.lang.ProcessBuilder" JIO class =ProcessBuilder
+def URL "java.net.URL" JIO class =URL
+def String "java.lang.String" JIO class =String
+def File "java.io.File" JIO class =File
+def Files "java.nio.file.Files" JIO class =Files
+def System "java.lang.System" JIO class =System
+
+def deps 
+
+func ensureDepsExist {
+    ("lib" File°new1)°exists0 not if {
+        [ dependencies ] =deps
+    }
+}
+
+func file {
+    with path ;
+    ("lib" File°new1)°mkdir0 pop
+    def file (path File°new1) =file
+    def name file°getName0 =name
+    def newfile (("lib/" name)°strconcat File°new1) =newfile
+    "\n> Using " puts
+    name puts
+    "..." puts
+    newfile°exists0 if {
+        "\n: Skipped. (Force by deleting lib/" puts name puts ")" puts
+        name
+        2 stop
+    }
+    file°exists0 not if {
+        "\n: Ignored. File " puts
+        path puts
+        " does not exist!" puts
+        name
+        2 stop
+    }
+    "Java" try {
+        file°toPath0 newfile°toPath0 0 anew Files°copy3 pop
+    } {
+        pop pop pop printStackTrace0
+    }
+    name
+}
+
+func download {
+    with url ;
+    ("lib" File°new1)°mkdir0 pop
+    (url URL)°new1 =url
+    def name (url°getPath0 "/" )°strsplit =name
+    (name (name°alen 1 -))°aget =name
+    def newfile (("lib/" name)°strconcat File°new1) =newfile
+    "\n> Downloading " puts
+    name puts
+    "..." puts
+    newfile°exists0 if {
+        "\n: Skipped. (Force by deleting lib/" puts name puts ")" puts
+        name
+        2 stop
+    }
+    def ms getms =ms
+    def inp
+    "Java" try {
+        url°openStream0 =inp
+    } {
+        pop pop pop printStackTrace0
+        "\n: Download failed." puts
+        name
+        2 stop
+    }
+    def file ("lib/" name)°strconcat STREAM.create.file.out stream =file
+    while { inp°read0 dup -1 eq not } {
+        file STREAM.write stream
+    }
+    pop
+    file STREAM.close stream
+    "\n: Took " puts
+    ((getms ms -) (1000 _long) / dup =ms) ltos puts
+    "s (" puts
+    ((newfile°length0 ms /) (1000 _long) /) ltos puts
+    "Kbps)" puts
+    name
+}
+
+func build {
+    def script "build.sh" STREAM.create.file.out stream =script
+    "\n> Generating javac command..." puts
+    "rm build.sh\n" script stream.write
+    "mkdir build > /dev/null 2>&1\n" script stream.write
+    "mkdir src > /dev/null 2>&1\n" script stream.write
+    "mkdir -p res/META-INF > /dev/null 2>&1\n" script stream.write
+    "mkdir lib > /dev/null 2>&1\n" script stream.write
+    "cd src ; find . | grep '\\.java$' | sed 's/^\\.\\/\\(.*\\)$/\\1/g' > ../build/buildfiles.txt\n" script stream.write
+    "javac -g -d ../build " script stream.write
+    deps°alen if {
+        "-cp " script stream.write
+        {
+            with dep ;
+            "'../lib/" script stream.write
+            dep script stream.write
+            "':" script stream.write
+        } deps foreach
+    }
+    " @../build/buildfiles.txt\n" script stream.write
+    "E=$?\n" script stream.write
+    "cd .. ; rm build/buildfiles.txt\n" script stream.write
+    "exit $E\n" script stream.write
+    script STREAM.close stream
+    "\n> Running javac...\n" puts
+    ([ "bash" "build.sh" ] ProcessBuilder°new1)°inheritIO0°start0°waitFor0
+    0 eq not if {
+        ": javac failed!" puts
+    }
+}
+
+func javadoc {
+    def script "javadoc.sh" STREAM.create.file.out stream =script
+    "\n> Generating javadoc command..." puts
+    "rm javadoc.sh\n" script stream.write
+    "mkdir javadoc > /dev/null 2>&1\n" script stream.write
+    "mkdir src > /dev/null 2>&1\n" script stream.write
+    "cd src ; find . | grep '\\.java$' | sed 's/^\\.\\/\\(.*\\)$/\\1/g' > ../javadoc/files.txt\n" script stream.write
+    "javadoc -d ../javadoc " script stream.write
+    deps°alen if {
+        "-cp " script stream.write
+        {
+            with dep ;
+            "'../lib/" script stream.write
+            dep script stream.write
+            "':" script stream.write
+        } deps foreach
+    }
+    " @../javadoc/files.txt\n" script stream.write
+    "E=$?\n" script stream.write
+    "cd ../javadoc\n" script stream.write
+    "rm files.txt\n" script stream.write
+    "rm ../'" script stream.write
+    name script stream.write
+    "'-javadoc.zip\n" script stream.write
+    "zip -r ../'" script stream.write
+    name script stream.write
+    "'-javadoc.zip *\n" script stream.write
+    "exit $E\n" script stream.write
+    script STREAM.close stream
+    "\n> Running javadoc...\n" puts
+    ([ "bash" "javadoc.sh" ] ProcessBuilder°new1)°inheritIO0°start0°waitFor0
+    0 eq not if {
+        ": javadoc failed!" puts
+    }
+}
+
+func run {
+    def script "run.sh" STREAM.create.file.out stream =script
+    "\n> Generating run command..." puts
+    "java -cp res:build:" script stream.write
+    {
+        with dep ;
+        "'lib/" script stream.write
+        dep script stream.write
+        "':" script stream.write
+    } deps foreach
+    " " script stream.write
+    mainClass script stream.write
+    " " script stream.write
+    "ARGS" System°getenv1 dup if { dup script stream.write } pop
+    "\n" script stream.write
+    "exit $?\n" script stream.write
+    script STREAM.close stream
+    "\n> Running\n" puts
+    ([ "bash" "run.sh" ] ProcessBuilder°new1)°inheritIO0°start0°waitFor0
+    0 eq not if {
+        ": Run failed!\n" puts
+        1 exit
+    }
+}
+
+func jar {
+    def script "jar.sh" STREAM.create.file.out stream =script
+    "\n> Generating jar builder..." puts
+    "rm jar.sh\n" script stream.write
+    "mkdir jar > /dev/null 2>&1\n" script stream.write
+    {
+        with dep ;
+        "cp 'lib/" script stream.write
+        dep script stream.write
+        "' jar\n" script stream.write
+        "cd jar ; unzip -o '" script stream.write
+        dep script stream.write
+        "' ; rm '" script stream.write
+        dep script stream.write
+        "' ; cd ..\n" script stream.write
+    } deps foreach
+    "cp -r build/* jar\n" script stream.write
+    "cp -r res/* jar\n" script stream.write
+    "rm '" script stream.write
+    name script stream.write
+    ".jar'\n" script stream.write
+    "cd jar\n" script stream.write
+    "zip -r ../'" script stream.write
+    name script stream.write
+    ".jar' *\n" script stream.write
+    "cd .. ; rm -rf jar\n" script stream.write
+    script STREAM.close stream
+    "\n> Building jarfile...\n" puts
+    ([ "bash" "jar.sh" ] ProcessBuilder°new1)°inheritIO0°start0°waitFor0 pop
+}
+
+func makeManifest {
+    def file "res/META-INF/MANIFEST.MF" STREAM.create.file.out stream =file
+    "\n> Generating manifest..." puts
+    "Manifest-Version: 1.0\n" file stream.write
+    "Main-Class: " file stream.write
+    mainClass file stream.write
+    "\n" file stream.write
+    file STREAM.close stream
+}
+
+def extraToClean 0 anew =extraToClean
+
+func toClean { [ 
+    "build"
+    "lib"
+    name ".jar" strconcat
+    "run.sh"
+    "javadoc"
+    name "-javadoc.zip" strconcat
+] extraToClean aadd }
+
+func clean {
+    def script "clean.sh" STREAM.create.file.out stream =script
+    "\n> Cleaning..." puts
+    "rm clean.sh\n" script stream.write
+    {
+        with file ;
+        "rm -rf '" script stream.write
+        file script stream.write
+        "'\n" script stream.write
+    } toClean foreach
+    script STREAM.close stream
+    ([ "bash" "clean.sh" ] ProcessBuilder°new1)°inheritIO0°start0°waitFor0 pop
+}
+
+def tasks [ "javadoc" "clean" "build" "makeManifest" "run" "jar" ] =tasks
+
+func task {
+    [ swap ] tasks aadd =tasks
+}
+
+func isATask {
+    task
+}
+
+func isToClean {
+    [ swap ] extraToClean aadd =extraToClean
+}
+
+"Placeholders begin" #
+def mainClass "Main" =mainClass
+def name "placeholder" =name
+func dependencies { }
+"Placeholders end" #
+
+func main {
+    with args ;
+    [ dependencies ] =deps
+    {
+        with arg ;
+        {
+            with task ;
+            arg task eq if {
+                ensureDepsExist
+                task 0 _layer_call
+            }
+        } tasks foreach
+    } args foreach
+    "\n" puts
+    0
+}
