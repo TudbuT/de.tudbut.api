@@ -140,6 +140,24 @@ public class TudbuTAPIClient {
         }
     }
 
+    public RequestResult<?> getDataMessages() {
+        HTTPRequest request = new HTTPRequest(
+                HTTPRequestType.POST, host, port, "/api/service/" + service + "/data/read", "application/x-www-urlencoded", 
+                "uuid=" + uuid + "&token=" + authToken
+        );
+        try {
+            TCN jsonResponse = JSON.read(request.send().parse().getBody());
+            if(jsonResponse.getBoolean("accessGranted")) {
+                return RequestResult.SUCCESS(decryptMessages(jsonResponse.getArray("messages")));
+            }
+            else {
+                return RequestResult.FAIL(jsonResponse);
+            }
+        } catch (JSONFormatException | IOException e) {
+            return RequestResult.FAIL(e);
+        }
+    }
+
     public RequestResult<?> getService() {
         HTTPRequest request = new HTTPRequest(HTTPRequestType.POST, host, port, "/api/service/" + service);
         try {
@@ -207,8 +225,12 @@ public class TudbuTAPIClient {
         return user.getSub("services").getSub(service).getLong("useTime");
     }
 
-    public ArrayList<TCN> decryptMessages() {
-        return decryptMessages(user.getSub("services").getSub(service).getArray("messages"));
+    public int premiumStatus() {
+        return user.getSub("services").getSub(service).getInteger("premiumStatus");
+    }
+
+    public TCN serviceData() {
+        return user.getSub("services").getSub(service).getSub("data");
     }
 
     private ArrayList<TCN> decryptMessages(TCNArray array) {
