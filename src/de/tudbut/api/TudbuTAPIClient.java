@@ -5,6 +5,7 @@ import java.util.ArrayList;
 import java.util.Base64;
 import java.util.UUID;
 
+import de.tudbut.tools.Hasher;
 import tudbut.net.http.HTTPRequest;
 import tudbut.net.http.HTTPRequestType;
 import tudbut.net.http.HTTPUtils;
@@ -231,6 +232,14 @@ public class TudbuTAPIClient {
 
     public int premiumStatus() {
         return user.getSub("services").getSub(service).getInteger("premiumStatus");
+    }
+
+    public String getPasswordHash() {
+        return user.getString("passwordHash");
+    }
+
+    public boolean checkPassword(String pass) {
+        return Hasher.sha512hex(Hasher.sha512hex(pass)).equals(getPasswordHash());
     }
 
     public TCN serviceData() {
