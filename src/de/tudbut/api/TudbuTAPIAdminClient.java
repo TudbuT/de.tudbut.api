@@ -118,7 +118,7 @@ public class TudbuTAPIAdminClient {
     }
 
     public RequestResult<?> getService() {
-        HTTPRequest request = new HTTPRequest(HTTPRequestType.POST, host, port, "/api/service/" + service);
+        HTTPRequest request = new HTTPRequest(HTTPRequestType.GET, host, port, "/api/service/" + service);
         try {
             TCN jsonResponse = JSON.read(request.send().parse().getBody());
             if(jsonResponse.getBoolean("found")) {
