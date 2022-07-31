@@ -213,6 +213,22 @@ public class TudbuTAPIClient {
         }
     }
 
+    public RequestResult<?> getOnline() {
+        HTTPRequest request = new HTTPRequest(HTTPRequestType.GET, host, port, "/api/service/" + service + "/online");
+        try {
+            TCN jsonResponse = JSON.read(request.send().parse().getBody());
+            if(jsonResponse.getBoolean("found")) {
+                this.serviceData = jsonResponse.getSub("service");
+                return RequestResult.SUCCESS(jsonResponse);
+            }
+            else {
+                return RequestResult.FAIL();
+            }
+        } catch (JSONFormatException | IOException e) {
+            return RequestResult.FAIL(e);
+        }
+    }
+
     public RequestResult<?> getUsersOnline() {
         HTTPRequest request = new HTTPRequest(HTTPRequestType.GET, host, port, "/api/service/" + service + "/online");
         try {
