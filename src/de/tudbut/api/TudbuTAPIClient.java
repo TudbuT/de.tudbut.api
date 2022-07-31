@@ -178,8 +178,8 @@ public class TudbuTAPIClient {
 
     public RequestResult<?> setPassword(String oldPass, String newPass) {
         HTTPRequest request = new HTTPRequest(
-                HTTPRequestType.GET, host, port, "/api/user/" + uuid + "/password", "application/x-www-urlencoded",
-                "password=" + HTTPUtils.encodeUTF8(oldPass) + "&new=" + HTTPUtils.encodeUTF8(newPass)
+                HTTPRequestType.GET, host, port, "/api/user/" + uuid + "/password?" +
+                "old=" + HTTPUtils.encodeUTF8(oldPass) + "&new=" + HTTPUtils.encodeUTF8(newPass)
         );
         try {
             TCN jsonResponse = JSON.read(request.send().parse().getBody());
