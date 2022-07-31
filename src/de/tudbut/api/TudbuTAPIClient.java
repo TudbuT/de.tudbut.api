@@ -124,6 +124,24 @@ public class TudbuTAPIClient {
         }
     }
 
+    public RequestResult<?> sendMessage(String message) {
+        HTTPRequest request = new HTTPRequest(
+                HTTPRequestType.POST, host, port, "/api/service/" + service + "/messageAll", "application/x-www-urlencoded", 
+                "uuid=" + uuid + "&token=" + authToken + "&message=" + HTTPUtils.encodeUTF8(message)
+        );
+        try {
+            TCN jsonResponse = JSON.read(request.send().parse().getBody());
+            if(jsonResponse.getBoolean("accessGranted")) {
+                return RequestResult.SUCCESS(jsonResponse);
+            }
+            else {
+                return RequestResult.FAIL(jsonResponse);
+            }
+        } catch (JSONFormatException | IOException e) {
+            return RequestResult.FAIL(e);
+        }
+    }
+
     public RequestResult<?> getMessages() {
         HTTPRequest request = new HTTPRequest(
                 HTTPRequestType.POST, host, port, "/api/service/" + service + "/message/read", "application/x-www-urlencoded", 
