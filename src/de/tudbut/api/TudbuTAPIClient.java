@@ -21,8 +21,8 @@ public class TudbuTAPIClient {
     UUID uuid;
     String host;
     int port;
-    TCN user;
-    TCN serviceData;
+    public TCN user;
+    public TCN serviceData;
     RawKey authKey;
     String authToken;     // this is for accessing TudbuTAPI service messages
     String fullAuthToken; // this is for changing the api password, obtained through game authentication

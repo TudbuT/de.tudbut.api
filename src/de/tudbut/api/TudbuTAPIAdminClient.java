@@ -16,7 +16,7 @@ public class TudbuTAPIAdminClient {
     String password;
     String host;
     int port;
-    TCN serviceData;
+    public TCN serviceData;
 
     public TudbuTAPIAdminClient(String service, String password, String host, int port) {
         this.service = service;
