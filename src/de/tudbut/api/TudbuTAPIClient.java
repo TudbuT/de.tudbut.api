@@ -345,6 +345,10 @@ public class TudbuTAPIClient {
         return user.getSub("services").getSub(service).getSub("data");
     }
 
+    public TCN globalServiceData() {
+        return serviceData.getSub("data");
+    }
+
     private ArrayList<TCN> decryptMessages(TCNArray array) {
         ArrayList<TCN> messages = new ArrayList<>();
         for(int i = 0; i < array.size(); i++) {

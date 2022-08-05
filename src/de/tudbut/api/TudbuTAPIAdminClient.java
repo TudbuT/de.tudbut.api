@@ -63,10 +63,28 @@ public class TudbuTAPIAdminClient {
         }
     }
 
+    public RequestResult<?> setData(TCN data) {
+        HTTPRequest request = new HTTPRequest(
+                HTTPRequestType.POST, host, port, "/api/service/" + service + "/data", "application/x-www-urlencoded", 
+                "servicePass=" + HTTPUtils.encodeUTF8(password) + "&data=" + HTTPUtils.encodeUTF8(JSON.write(data))
+        );
+        try {
+            TCN jsonResponse = JSON.read(request.send().parse().getBody());
+            if(jsonResponse.getBoolean("success")) {
+                return RequestResult.SUCCESS(jsonResponse);
+            }
+            else {
+                return RequestResult.FAIL(jsonResponse);
+            }
+        } catch (JSONFormatException | IOException e) {
+            return RequestResult.FAIL(e);
+        }
+    }
+
     public RequestResult<?> setData(UUID uuid, TCN data) {
         HTTPRequest request = new HTTPRequest(
                 HTTPRequestType.POST, host, port, "/api/service/" + service + "/data/set", "application/x-www-urlencoded", 
-                "servicePass=" + HTTPUtils.encodeUTF8(password) + "&uuid=" + uuid+ "&data=" + HTTPUtils.encodeUTF8(JSON.write(data))
+                "servicePass=" + HTTPUtils.encodeUTF8(password) + "&uuid=" + uuid + "&data=" + HTTPUtils.encodeUTF8(JSON.write(data))
         );
         try {
             TCN jsonResponse = JSON.read(request.send().parse().getBody());
