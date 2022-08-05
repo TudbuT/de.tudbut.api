@@ -34,7 +34,7 @@ public class TudbuTAPIAdminClient {
         );
         try {
             TCN jsonResponse = JSON.read(request.send().parse().getBody());
-            if(jsonResponse.getBoolean("set")) {
+            if(jsonResponse.getBoolean("success")) {
                 return RequestResult.SUCCESS(jsonResponse);
             }
             else {
@@ -52,7 +52,7 @@ public class TudbuTAPIAdminClient {
         );
         try {
             TCN jsonResponse = JSON.read(request.send().parse().getBody());
-            if(jsonResponse.getBoolean("found")) {
+            if(jsonResponse.getBoolean("success")) {
                 return RequestResult.SUCCESS(jsonResponse);
             }
             else {
@@ -70,7 +70,7 @@ public class TudbuTAPIAdminClient {
         );
         try {
             TCN jsonResponse = JSON.read(request.send().parse().getBody());
-            if(jsonResponse.getBoolean("set")) {
+            if(jsonResponse.getBoolean("success")) {
                 return RequestResult.SUCCESS(jsonResponse);
             }
             else {
@@ -88,7 +88,7 @@ public class TudbuTAPIAdminClient {
         );
         try {
             TCN jsonResponse = JSON.read(request.send().parse().getBody());
-            if(jsonResponse.getBoolean("set")) {
+            if(jsonResponse.getBoolean("success")) {
                 return RequestResult.SUCCESS(jsonResponse);
             }
             else {
@@ -106,7 +106,7 @@ public class TudbuTAPIAdminClient {
         );
         try {
             TCN jsonResponse = JSON.read(request.send().parse().getBody());
-            if(jsonResponse.getBoolean("set")) {
+            if(jsonResponse.getBoolean("success")) {
                 return RequestResult.SUCCESS(jsonResponse);
             }
             else {
@@ -121,7 +121,7 @@ public class TudbuTAPIAdminClient {
         HTTPRequest request = new HTTPRequest(HTTPRequestType.GET, host, port, "/api/service/" + service);
         try {
             TCN jsonResponse = JSON.read(request.send().parse().getBody());
-            if(jsonResponse.getBoolean("found")) {
+            if(jsonResponse.getBoolean("success")) {
                 this.serviceData = jsonResponse.getSub("service");
                 return RequestResult.SUCCESS(jsonResponse.getSub("service"));
             }

@@ -41,7 +41,7 @@ public class TudbuTAPIClient {
         HTTPRequest request = new HTTPRequest(HTTPRequestType.POST, host, port, "/api/service/" + service + "/use", "application/x-www-urlencoded", "uuid=" + uuid);
         try {
             TCN jsonResponse = JSON.read(request.send().parse().getBody());
-            if(jsonResponse.getBoolean("updated")) {
+            if(jsonResponse.getBoolean("success")) {
                 user = jsonResponse.getSub("user");
                 serviceData = jsonResponse.getSub("service");
                 return RequestResult.SUCCESS(jsonResponse);
@@ -58,7 +58,7 @@ public class TudbuTAPIClient {
         HTTPRequest request = new HTTPRequest(HTTPRequestType.POST, host, port, "/api/user/" + uuid);
         try {
             TCN jsonResponse = JSON.read(request.send().parse().getBody());
-            if(jsonResponse.getBoolean("found")) {
+            if(jsonResponse.getBoolean("success")) {
                 this.user = jsonResponse.getSub("user");
                 return RequestResult.SUCCESS(jsonResponse.getSub("user"));
             }
@@ -74,7 +74,7 @@ public class TudbuTAPIClient {
         HTTPRequest request = new HTTPRequest(HTTPRequestType.POST, host, port, "/api/service/" + service + "/login", "application/x-www-urlencoded", "uuid=" + uuid + "&version=" + HTTPUtils.encodeUTF8(version));
         try {
             TCN jsonResponse = JSON.read(request.send().parse().getBody());
-            if(jsonResponse.getBoolean("found")) {
+            if(jsonResponse.getBoolean("success")) {
                 this.authKey = new RawKey(jsonResponse.getString("key"));
                 this.authToken = jsonResponse.getString("token");
                 this.user = jsonResponse.getSub("user");
@@ -95,7 +95,7 @@ public class TudbuTAPIClient {
         );
         try {
             TCN jsonResponse = JSON.read(request.send().parse().getBody());
-            if(jsonResponse.getBoolean("found")) {
+            if(jsonResponse.getBoolean("success")) {
                 return RequestResult.SUCCESS(jsonResponse);
             }
             else {
@@ -113,7 +113,7 @@ public class TudbuTAPIClient {
         );
         try {
             TCN jsonResponse = JSON.read(request.send().parse().getBody());
-            if(jsonResponse.getBoolean("found")) {
+            if(jsonResponse.getBoolean("success")) {
                 return RequestResult.SUCCESS(jsonResponse);
             }
             else {
@@ -131,7 +131,7 @@ public class TudbuTAPIClient {
         );
         try {
             TCN jsonResponse = JSON.read(request.send().parse().getBody());
-            if(jsonResponse.getBoolean("accessGranted")) {
+            if(jsonResponse.getBoolean("success")) {
                 return RequestResult.SUCCESS(jsonResponse);
             }
             else {
@@ -149,7 +149,7 @@ public class TudbuTAPIClient {
         );
         try {
             TCN jsonResponse = JSON.read(request.send().parse().getBody());
-            if(jsonResponse.getBoolean("accessGranted")) {
+            if(jsonResponse.getBoolean("success")) {
                 return RequestResult.SUCCESS(decryptMessages(jsonResponse.getArray("messages")));
             }
             else {
@@ -167,7 +167,7 @@ public class TudbuTAPIClient {
         );
         try {
             TCN jsonResponse = JSON.read(request.send().parse().getBody());
-            if(jsonResponse.getBoolean("accessGranted")) {
+            if(jsonResponse.getBoolean("success")) {
                 return RequestResult.SUCCESS(decryptMessages(jsonResponse.getArray("messages")));
             }
             else {
@@ -182,7 +182,7 @@ public class TudbuTAPIClient {
         HTTPRequest request = new HTTPRequest(HTTPRequestType.GET, host, port, "/api/service/" + service);
         try {
             TCN jsonResponse = JSON.read(request.send().parse().getBody());
-            if(jsonResponse.getBoolean("found")) {
+            if(jsonResponse.getBoolean("success")) {
                 this.serviceData = jsonResponse.getSub("service");
                 return RequestResult.SUCCESS(jsonResponse.getSub("service"));
             }
@@ -201,7 +201,7 @@ public class TudbuTAPIClient {
         );
         try {
             TCN jsonResponse = JSON.read(request.send().parse().getBody());
-            if(jsonResponse.getBoolean("set")) {
+            if(jsonResponse.getBoolean("success")) {
                 this.user = jsonResponse.getSub("user");
                 return RequestResult.SUCCESS(jsonResponse);
             }
@@ -217,7 +217,7 @@ public class TudbuTAPIClient {
         HTTPRequest request = new HTTPRequest(HTTPRequestType.GET, host, port, "/api/service/" + service + "/online");
         try {
             TCN jsonResponse = JSON.read(request.send().parse().getBody());
-            if(jsonResponse.getBoolean("found")) {
+            if(jsonResponse.getBoolean("success")) {
                 this.serviceData = jsonResponse.getSub("service");
                 return RequestResult.SUCCESS(jsonResponse);
             }
@@ -233,7 +233,7 @@ public class TudbuTAPIClient {
         HTTPRequest request = new HTTPRequest(HTTPRequestType.GET, host, port, "/api/service/" + service + "/online");
         try {
             TCN jsonResponse = JSON.read(request.send().parse().getBody());
-            if(jsonResponse.getBoolean("found")) {
+            if(jsonResponse.getBoolean("success")) {
                 this.serviceData = jsonResponse.getSub("service");
                 return RequestResult.SUCCESS(jsonResponse.getInteger("usersOnline"));
             }
@@ -254,7 +254,7 @@ public class TudbuTAPIClient {
         );
         try {
             TCN jsonResponse = JSON.read(request.send().parse().getBody());
-            if(jsonResponse.getBoolean("found")) {
+            if(jsonResponse.getBoolean("success")) {
                 TCN json = new TCN();
                 json.set("accessToken", mojangToken); // Here, the token is put into the data to send to mojang.
                 json.set("selectedProfile", uuid.toString().replace("-", "")); // Here, the player's uuid is put into the request to mojang.
@@ -283,7 +283,7 @@ public class TudbuTAPIClient {
         );
         try {
             TCN jsonResponse = JSON.read(request.send().parse().getBody());
-            if(jsonResponse.getBoolean("set")) {
+            if(jsonResponse.getBoolean("success")) {
                 return RequestResult.SUCCESS();
             }
         } catch (JSONFormatException | IOException e) {}
@@ -297,7 +297,7 @@ public class TudbuTAPIClient {
         );
         try {
             TCN jsonResponse = JSON.read(request.send().parse().getBody());
-            if(jsonResponse.getBoolean("set")) {
+            if(jsonResponse.getBoolean("success")) {
                 this.user = jsonResponse.getSub("user");
                 return RequestResult.SUCCESS(jsonResponse);
             }
