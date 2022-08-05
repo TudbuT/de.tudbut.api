@@ -151,6 +151,21 @@ public class TudbuTAPIAdminClient {
         }
     }
 
+    public RequestResult<?> getData() {
+        HTTPRequest request = new HTTPRequest(HTTPRequestType.GET, host, port, "/api/service/" + service);
+        try {
+            TCN jsonResponse = JSON.read(request.send().parse().getBody());
+            if(jsonResponse.getBoolean("success")) {
+                return RequestResult.SUCCESS(jsonResponse.getSub("data"));
+            }
+            else {
+                return RequestResult.FAIL();
+            }
+        } catch (JSONFormatException | IOException e) {
+            return RequestResult.FAIL(e);
+        }
+    }
+
     public RequestResult<?> getData(UUID uuid) {
         HTTPRequest request = new HTTPRequest(HTTPRequestType.GET, host, port, "/api/user/" + uuid);
         try {
