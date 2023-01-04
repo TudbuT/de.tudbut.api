@@ -75,7 +75,7 @@ public class TudbuTAPIClient {
         try {
             TCN jsonResponse = JSON.read(request.send().parse().getBody());
             if(jsonResponse.getBoolean("success")) {
-                this.authKey = new RawKey(jsonResponse.getString("key"));
+                this.authKey = new RawKey(jsonResponse.getString("token"));
                 this.authToken = jsonResponse.getString("token");
                 this.user = jsonResponse.getSub("user");
                 return RequestResult.SUCCESS(jsonResponse);
