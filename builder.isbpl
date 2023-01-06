@@ -141,7 +141,7 @@ func javadoc {
     "'-javadoc.zip\n" script stream.write
     "zip -r ../'" script stream.write
     name script stream.write
-    "'-javadoc.zip *\n" script stream.write
+    "'-javadoc.zip * > /dev/null\n" script stream.write
     "exit $E\n" script stream.write
     script STREAM.close stream
     "\n> Running javadoc...\n" puts
@@ -188,7 +188,7 @@ func jar {
         "' jar\n" script stream.write
         "cd jar ; unzip -o '" script stream.write
         dep script stream.write
-        "' ; rm '" script stream.write
+        "' > /dev/null ; rm '" script stream.write
         dep script stream.write
         "' ; cd ..\n" script stream.write
     } deps foreach
@@ -200,7 +200,7 @@ func jar {
     "cd jar\n" script stream.write
     "zip -r ../'" script stream.write
     name script stream.write
-    ".jar' *\n" script stream.write
+    ".jar' * > /dev/null\n" script stream.write
     "cd .. ; rm -rf jar\n" script stream.write
     script STREAM.close stream
     "\n> Building jarfile...\n" puts
