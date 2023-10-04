@@ -3,12 +3,12 @@ package de.tudbut.api;
 import java.io.IOException;
 import java.util.UUID;
 
-import tudbut.net.http.HTTPRequest;
-import tudbut.net.http.HTTPRequestType;
-import tudbut.net.http.HTTPUtils;
-import tudbut.parsing.JSON;
-import tudbut.parsing.TCN;
-import tudbut.parsing.JSON.JSONFormatException;
+import de.tudbut.net.http.HTTPRequest;
+import de.tudbut.net.http.HTTPRequestType;
+import de.tudbut.net.http.HTTPUtils;
+import de.tudbut.parsing.JSON;
+import de.tudbut.parsing.TCN;
+import de.tudbut.parsing.JSON.JSONFormatException;
 
 public class TudbuTAPIAdminClient {
 

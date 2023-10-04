@@ -6,14 +6,14 @@ import java.util.Base64;
 import java.util.UUID;
 
 import de.tudbut.tools.Hasher;
-import tudbut.net.http.HTTPRequest;
-import tudbut.net.http.HTTPRequestType;
-import tudbut.net.http.HTTPUtils;
-import tudbut.parsing.JSON;
-import tudbut.parsing.TCN;
-import tudbut.parsing.TCNArray;
-import tudbut.parsing.JSON.JSONFormatException;
-import tudbut.tools.encryption.RawKey;
+import de.tudbut.net.http.HTTPRequest;
+import de.tudbut.net.http.HTTPRequestType;
+import de.tudbut.net.http.HTTPUtils;
+import de.tudbut.parsing.JSON;
+import de.tudbut.parsing.TCN;
+import de.tudbut.parsing.TCNArray;
+import de.tudbut.parsing.JSON.JSONFormatException;
+import de.tudbut.tools.encryption.RawKey;
 
 public class TudbuTAPIClient {
 

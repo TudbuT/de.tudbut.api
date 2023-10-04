@@ -3,8 +3,8 @@ package de.tudbut.api;
 import java.util.ArrayList;
 import java.util.UUID;
 
-import tudbut.parsing.JSON;
-import tudbut.parsing.TCN;
+import de.tudbut.parsing.JSON;
+import de.tudbut.parsing.TCN;
 
 public class Main {
 
